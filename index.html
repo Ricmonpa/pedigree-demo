@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedigree - Análisis Nutricional con IA</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header con Logo y Botón Subir Video -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="assets/pedigree-logo.png" alt="Pedigree Logo" class="logo-img">
+                </div>
+                <button class="btn-upload" id="btnUpload">
+                    <span class="btn-icon">📹</span>
+                    <span class="btn-text">Subir Otro Video</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sección de Video -->
+        <section class="video-section">
+            <div class="video-container" id="videoContainer">
+                <div class="video-placeholder" id="videoPlaceholder">
+                    <div class="placeholder-icon">📹</div>
+                    <p class="placeholder-text">Sube un video de tu perro para comenzar el análisis</p>
+                </div>
+                <video id="dogVideo" class="dog-video" controls style="display: none;"></video>
+                
+                <!-- Logo Pedigree en esquina del video -->
+                <div class="video-logo">
+                    <img src="assets/pedigree-logo.png" alt="Pedigree" class="video-logo-img">
+                </div>
+                
+                <!-- Overlay de Subtítulos Emocionales (estilo BlaBlaPet) -->
+                <div class="subtitles-overlay hidden" id="subtitlesOverlay">
+                    <div class="subtitle-bubble">
+                        <span class="subtitle-icon">🐕</span>
+                        <p class="subtitle-text" id="currentSubtitle">¡Oh, qué es eso! ¡Lo quiero!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p class="loading-text">Analizando a tu perrito...</p>
+                <p class="loading-subtext">Esto puede tomar 10-15 segundos</p>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Nutricional -->
+        <section class="chat-section" id="chatSection" style="display: none;">
+            <div class="chat-header">
+                <span class="chat-icon">💬</span>
+                <h2 class="chat-title">Chat Nutricional</h2>
+            </div>
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-message">
+                    <img src="" alt="Avatar del perro" class="message-avatar-img" id="chatAvatar" style="display: none;">
+                    <div class="message-avatar-fallback">🐕</div>
+                    <div class="message-content">
+                        <div id="chatMessage">Esperando análisis...</div>
+                    </div>
+                </div>
+                
+                <!-- Información de Porciones -->
+                <div class="portions-section" id="portionsInfo" style="display: none;">
+                    <h3 class="portions-title">📋 Recomendación de Porciones</h3>
+                </div>
+                
+                <!-- Sección de Productos -->
+                <div class="products-section" id="productsSection" style="display: none;">
+                    <h3 class="products-title">Productos Recomendados</h3>
+                    <div class="products-grid">
+                        <div class="product-item">
+                            <div class="product-icon">📦</div>
+                            <div class="product-name">Sobres Húmedos</div>
+                        </div>
+                        <div class="product-item">
+                            <div class="product-icon">📦</div>
+                            <div class="product-name">Croquetas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-actions">
+                <button class="btn-action btn-product" id="btnProduct">
+                    <span class="btn-icon">🛒</span>
+                    <span class="btn-text">Ver Producto y Precio</span>
+                </button>
+                <button class="btn-action btn-nutritional" id="btnNutritional">
+                    <span class="btn-icon">📊</span>
+                    <span class="btn-text">Info Nutricional</span>
+                </button>
+                <button class="btn-action btn-share" id="btnShare" style="display: none;">
+                    <span class="btn-icon">📱</span>
+                    <span class="btn-text">Compartir Análisis</span>
+                </button>
+                <button class="btn-action btn-another" id="btnAnother" style="display: none;">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">Analizar Otro Perrito</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Input de archivo oculto -->
+        <input type="file" id="videoInput" accept="video/mp4,video/quicktime,video/webm" style="display: none;">
+        
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage" style="display: none;">
+            <div class="error-content">
+                <span class="error-icon">⚠️</span>
+                <p class="error-text" id="errorText"></p>
+                <p class="error-tip" id="errorTip"></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
+

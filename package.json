@@ -1,0 +1,14 @@
+{
+  "name": "pedigree-demo",
+  "version": "1.0.0",
+  "description": "Pedigree Landing Page with AI Analysis",
+  "type": "module",
+  "scripts": {
+    "dev": "npx http-server . -p 8080 -o",
+    "start": "npx http-server . -p 8080"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1"
+  }
+}
+
