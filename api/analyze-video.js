@@ -1,4 +1,6 @@
-export default async function handler(req, res) {
+const fetch = require('node-fetch');
+
+module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -21,7 +23,7 @@ export default async function handler(req, res) {
       : process.env.GEMINI_API_KEY_PAWANALYTICS;
 
     if (!apiKey) {
-      throw new Error('API key no configurada');
+      throw new Error('API key no configurada en variables de entorno');
     }
 
     const MODEL_NAME = 'gemini-2.0-flash';
@@ -36,13 +38,6 @@ INSTRUCCIONES:
 2. Para cada segmento, genera un subtítulo emocional en primera persona (como si el perro hablara)
 3. Sé expresivo, divertido y emotivo
 4. Usa exclamaciones y emociones intensas
-
-EJEMPLOS DE SUBTÍTULOS EMOCIONALES:
-- "¡Oh, qué es eso! ¡Huele delicioso!"
-- "¡Dame, dame, dame! ¡Lo quiero ya!"
-- "Mmm... esto está increíble..."
-- "¡Mira eso! ¿Es para mí?"
-- "¡Soy el perro más feliz del mundo!"
 
 FORMATO JSON (responde SOLO con esto):
 {
@@ -117,4 +112,4 @@ Responde en formato natural, como si hablaras con el dueño. Sé amigable y prof
       error: error.message
     });
   }
-}
+};
