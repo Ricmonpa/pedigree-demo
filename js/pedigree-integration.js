@@ -69,10 +69,10 @@ function extractFrameFromVideo(videoElement, timeInSeconds = 2) {
  */
 export async function processVideo(videoFile, videoElement) {
     try {
-        // Validar tamaño del video (máximo 20MB para evitar problemas)
-        const maxSize = 20 * 1024 * 1024; // 20MB
+        // Validar tamaño del video (máximo 5MB para Vercel)
+        const maxSize = 5 * 1024 * 1024; // 5MB
         if (videoFile.size > maxSize) {
-            throw new Error('El video es demasiado grande. Por favor, sube un video menor a 20MB.');
+            throw new Error('El video es demasiado grande. Por favor, sube un video menor a 5MB.');
         }
         
         // Validar formato

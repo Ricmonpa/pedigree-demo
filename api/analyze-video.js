@@ -17,6 +17,17 @@ module.exports = async function handler(req, res) {
   try {
     const { videoData, mimeType, analysisType } = req.body;
 
+    // Validar tamaño del payload (Vercel límite: ~4MB)
+    const payloadSize = JSON.stringify(req.body).length;
+    const maxSize = 4 * 1024 * 1024; // 4MB
+    
+    if (payloadSize > maxSize) {
+      return res.status(413).json({ 
+        success: false, 
+        error: 'El archivo es demasiado grande. Por favor, usa un video más corto o de menor calidad.' 
+      });
+    }
+
     // Usar API key desde variable de entorno (SEGURA)
     const apiKey = analysisType === 'behavior' 
       ? process.env.GEMINI_API_KEY_BLABLAPET
@@ -107,9 +118,15 @@ Responde en formato natural, como si hablaras con el dueño. Sé amigable y prof
 
   } catch (error) {
     console.error('Error en análisis:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      analysisType: req.body?.analysisType
+    });
+    
     return res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message || 'Error interno del servidor'
     });
   }
 };
