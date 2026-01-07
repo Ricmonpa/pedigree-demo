@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/analyze-video.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}

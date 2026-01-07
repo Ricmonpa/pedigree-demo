@@ -1,6 +1,4 @@
-const GEMINI_API_KEY_PAWANALYTICS = 'AIzaSyAEH-2vaXSgOB2TILG4zr1Dlo5QHktkBLk';
-const MODEL_NAME = 'gemini-2.0-flash';
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_API_KEY_PAWANALYTICS}`;
+// API keys ahora están protegidas en el backend
 
 /**
  * Analiza la salud de un perro a partir de una imagen usando Gemini AI
@@ -9,54 +7,37 @@ const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL
  */
 export async function analyzeImageHealth(imageBase64) {
     try {
-        // Prompt para análisis de salud
-        const prompt = `Analiza esta imagen de un perro y determina:
-
-1. Raza aproximada
-2. Peso estimado en kg
-3. Condición corporal: 'flaco', 'saludable' o 'sobrepeso'
-4. Estado del pelaje
-
-Responde en formato natural, como si hablaras con el dueño. Sé amigable y profesional.`;
-
-        // Preparar el payload para la API
-        const base64Data = imageBase64.split(',')[1]; // Remover el prefijo
-        const mimeType = imageBase64.match(/data:([^;]+);/)?.[1] || 'image/jpeg';
-
-        const payload = {
-            contents: [{
-                parts: [
-                    { text: prompt },
-                    {
-                        inlineData: {
-                            data: base64Data,
-                            mimeType: mimeType
-                        }
-                    }
-                ]
-            }]
-        };
-
-        // Realizar la solicitud a la API REST
-        const response = await fetch(API_URL, {
+        console.log('📊 Analizando salud del perro...');
+        
+        // Limpiar base64
+        const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+        
+        // Llamar a NUESTRA API (keys protegidas)
+        const response = await fetch('/api/analyze-video', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                videoData: cleanBase64,
+                mimeType: 'image/jpeg',
+                analysisType: 'health'
+            })
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(`API Error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+            throw new Error(`Error en API: ${response.status}`);
         }
 
         const result = await response.json();
-        const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        
+        if (!result.success) {
+            throw new Error(result.error);
+        }
 
-        return text;
+        return result.data;
     } catch (error) {
-        console.error('Error en analyzeImageHealth:', error);
+        console.error('❌ Error en análisis de salud:', error);
         
         // Manejo de errores específicos
         if (error.message?.includes('429') || error.message?.includes('RESOURCE_EXHAUSTED')) {

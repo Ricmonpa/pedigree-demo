@@ -1,6 +1,4 @@
-const GEMINI_API_KEY_BLABLAPET = 'AIzaSyCpQESy8sGmOM53xv9DmbHdNj0X3J7DZvc';
-const MODEL_NAME = 'gemini-2.0-flash';
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_API_KEY_BLABLAPET}`;
+// API keys ahora están protegidas en el backend
 
 /**
  * Analiza el comportamiento de un perro en un video usando Gemini AI
@@ -9,85 +7,39 @@ const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL
  */
 export async function analyzeVideoBehavior(videoFile) {
     try {
+        console.log('🎬 Analizando comportamiento del video...');
+        
         // Convertir video a base64
         const videoBase64 = await fileToBase64(videoFile);
+        const videoData = videoBase64.split(',')[1];
         
-        // Prompt para análisis de comportamiento
-        const prompt = `Eres BlaBlaPet, un traductor emocional de perros. Analiza este video y genera subtítulos que expresen lo que el perro está "pensando" o "diciendo" emocionalmente.
-
-INSTRUCCIONES:
-1. Divide el video en segmentos de 3-7 segundos
-2. Para cada segmento, genera un subtítulo emocional en primera persona (como si el perro hablara)
-3. Sé expresivo, divertido y emotivo
-4. Usa exclamaciones y emociones intensas
-
-EJEMPLOS DE SUBTÍTULOS EMOCIONALES:
-- "¡Oh, qué es eso! ¡Huele delicioso!"
-- "¡Dame, dame, dame! ¡Lo quiero ya!"
-- "Mmm... esto está increíble..."
-- "¡Mira eso! ¿Es para mí?"
-- "¡Soy el perro más feliz del mundo!"
-
-FORMATO JSON (responde SOLO con esto):
-{
-  "subtitles": [
-    {
-      "timestamp": "00:00 - 00:05",
-      "traduccion_emocional": "¡Oh, qué es eso! ¡Huele delicioso, lo quiero ya!"
-    },
-    {
-      "timestamp": "00:05 - 00:10",
-      "traduccion_emocional": "¡Dame eso! ¡Por favor, por favor!"
-    },
-    {
-      "timestamp": "00:10 - 00:15",
-      "traduccion_emocional": "¡Sí! ¡Es para mí! ¡Qué felicidad!"
-    }
-  ]
-}
-
-IMPORTANTE: Genera al menos 3-5 subtítulos que cubran todo el video. Responde SOLO con el JSON.`;
-
-        // Preparar el payload para la API
-        const base64Data = videoBase64.split(',')[1]; // Remover el prefijo
-        const mimeType = videoFile.type || 'video/mp4';
-
-        const payload = {
-            contents: [{
-                parts: [
-                    { text: prompt },
-                    {
-                        inlineData: {
-                            data: base64Data,
-                            mimeType: mimeType
-                        }
-                    }
-                ]
-            }]
-        };
-
-        // Realizar la solicitud a la API REST
-        const response = await fetch(API_URL, {
+        // Llamar a NUESTRA API (keys protegidas en backend)
+        const response = await fetch('/api/analyze-video', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                videoData: videoData,
+                mimeType: videoFile.type,
+                analysisType: 'behavior'
+            })
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(`API Error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+            throw new Error(`Error en API: ${response.status}`);
         }
 
         const result = await response.json();
-        const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        
+        if (!result.success) {
+            throw new Error(result.error);
+        }
 
-        // Parsear la respuesta JSON
+        // Parsear respuesta JSON de Gemini
         let subtitles = [];
         try {
-            // Limpiar el texto para extraer solo el JSON
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            const jsonMatch = result.data.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 const parsed = JSON.parse(jsonMatch[0]);
                 subtitles = parsed.subtitles || [];
@@ -96,7 +48,7 @@ IMPORTANTE: Genera al menos 3-5 subtítulos que cubran todo el video. Responde S
             }
         } catch (parseError) {
             console.error('Error al parsear respuesta de Gemini:', parseError);
-            console.log('Respuesta recibida:', text);
+            console.log('Respuesta recibida:', result.data);
             // Fallback: crear un subtítulo genérico
             subtitles = [{
                 timestamp: "00:00 - 00:10",
@@ -106,7 +58,7 @@ IMPORTANTE: Genera al menos 3-5 subtítulos que cubran todo el video. Responde S
 
         return subtitles;
     } catch (error) {
-        console.error('Error en analyzeVideoBehavior:', error);
+        console.error('❌ Error en análisis de comportamiento:', error);
         
         // Manejo de errores específicos
         if (error.message?.includes('429') || error.message?.includes('RESOURCE_EXHAUSTED')) {
