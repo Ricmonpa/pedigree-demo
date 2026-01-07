@@ -1,5 +1,5 @@
-import { analyzeVideoBehavior } from './blablapet-adapter.js';
-import { analyzeImageHealth } from './pawanalytics-adapter.js';
+import { analyzeVideoBehavior } from './blablapet-adapter-v2.js';
+import { analyzeImageHealth } from './pawanalytics-adapter-v2.js';
 
 /**
  * Extrae un frame del video en un tiempo específico
